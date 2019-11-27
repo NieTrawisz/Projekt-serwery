@@ -1,0 +1,40 @@
+@startuml
+class Product{
++get_product_name() : string
++get_product_price() : float
+-product_name : string
+-product_price : float
+}
+
+class TooManyProductFoundError{
+
+}
+
+class ListServer{
+-product_list : List[Product]
++find(n: int) : List[Product]
+}
+
+class MapServer{
+-product_dict : Dict[Product]
++find(n: int) : List[Product]
+}
+
+class Server{
++listserver: ListServer
++mapserver: MapServer
++{abstract} find(n: int)
+}
+
+class Client {
+-server: Server
++get_total_price(n: int) : float
+}
+Server <|-- MapServer
+Server <|-- ListServer
+Client *-- Server
+ListServer *-- Product
+MapServer *-- Product
+ListServer *-- TooManyProductFoundError
+MapServer *-- TooManyProductFoundError
+@enduml
