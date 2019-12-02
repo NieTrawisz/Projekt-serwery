@@ -5,14 +5,14 @@
 from typing import Optional, List, Dict
 
 
-class Product:
+class Product():
     def __init__(self, product_name, product_price):
-        self.__product_name = product_name
-        self.__product_price = product_price
+        self.product_name = product_name
+        self.product_price = product_price
     def get_product_name(self):
-        return self.__product_name
+        return self.product_name
     def get_product_price(self):
-        return self.__product_price
+        return self.product_price
 
 
 class TooManyProductsFoundError:
@@ -21,17 +21,19 @@ class TooManyProductsFoundError:
 
 
 
-class ListServer:
-    def __init__(self, product_list):
-        self.__product_list = product_list
+class ListServer():
+    def __init__(self, product_list, n_max_returned_entries):
+        self.product_list = product_list
+        self.n_max_returned_entries = n_max_returned_entries
 
     def find(self, n: int) -> List[Product]:
         pass
 
 
 class MapServer:
-    def __init__(self, product_dict):
-        self.__product_dict = product_dict
+    def __init__(self, product_dict, n_max_returned_entries):
+        self.product_dict = product_dict
+        self.n_max_returned_entries = n_max_returned_entries
 
     def find(self, n: int) -> List[Product]:
         pass
@@ -43,3 +45,5 @@ class Client:
 
     def get_total_price(self, n_letters: Optional[int]) -> Optional[float]:
         raise NotImplementedError()
+
+
