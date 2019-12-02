@@ -1,0 +1,70 @@
+#Paweł Kolendo 302860
+# !/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from typing import Optional, List, Dict
+import re
+
+class Product:
+    def __init__(self, product_name, product_price):
+        self.product_name = product_name
+        self.product_price = product_price
+    def get_product_name(self):
+        return self.product_name
+    def get_product_price(self):
+        return self.product_price
+
+
+class TooManyProductsFoundError(Exception):
+    def __init__(self,msg=None):
+        if msg == None:
+            msg="Too many products found"
+        super().__init__(msg)
+        
+        
+class ListServer:
+    def __init__(self, product_list, n_max_returned_entries):
+        self.product_list = product_list
+        self.n_max_returned_entries = n_max_returned_entries
+
+    def find(self, n) -> List[Product]:
+        list=[]
+        for el in self.product_list:
+            a=re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n),el.product_name)
+            if a!=None:
+                list.append(el)
+        if len(list)>self.n_max_returned_entries:
+            raise TooManyProductsFoundError()
+        return list
+
+
+class MapServer:
+    def __init__(self, product_dict, n_max_returned_entries):
+        self.product_dict = product_dict
+        self.n_max_returned_entries = n_max_returned_entries
+
+    def find(self, n: int) -> List[Product]:
+        list = []
+        for el in self.product_dict:
+            a = re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n), el)
+            if a != None:
+                list.append(self.product_dict[el])
+        if len(list)>self.n_max_returned_entries:
+            raise TooManyProductsFoundError()
+        return list
+
+
+class Client:
+    def __init__(self, server):
+        self.server = server
+
+    def get_total_price(self, n_letters: Optional[int]) -> Optional[float]:
+        raise NotImplementedError()
+
+p=Product('xd123',4)
+ls=MapServer({p.product_name:p},2)
+print(ls.find(2))
+ls=ListServer({p},2)
+print(ls.find(2))
+ls=ListServer([p,p,p],2)
+print(ls.find(2))
