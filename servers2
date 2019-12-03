@@ -23,9 +23,9 @@ class TooManyProductsFoundError(Exception):
 
 
 class ListServer:
-    def __init__(self, product_list, n_max_returned_entries=3):
+    n_max_returned_entries = 3
+    def __init__(self, product_list):
         self.product_list = product_list
-        self.n_max_returned_entries = n_max_returned_entries
 
     def get_entries(self, n) -> List[Product]:
         list=[]
@@ -39,11 +39,11 @@ class ListServer:
 
 
 class MapServer:
-    def __init__(self, product_list, n_max_returned_entries=3):
+    n_max_returned_entries = 3
+    def __init__(self, product_list):
         self.product_dict = {}
         for el in product_list:
             self.product_dict[el.product_name]=el
-        self.n_max_returned_entries = n_max_returned_entries
 
     def get_entries(self, n: int) -> List[Product]:
         list = []
@@ -64,9 +64,9 @@ class Client:
         raise NotImplementedError()
 
 p=Product('xd123',4)
-ls=MapServer({p.product_name:p},2)
-print(ls.find(2))
-ls=ListServer({p},2)
-print(ls.find(2))
-ls=ListServer([p,p,p],2)
-print(ls.find(2))
+ls=MapServer([p])
+print(ls.get_entries(2))
+ls=ListServer([p])
+print(ls.get_entries(2))
+ls=ListServer([p,p,p,p])
+print(ls.get_entries(2))
