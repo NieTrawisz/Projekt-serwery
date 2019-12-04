@@ -1,4 +1,3 @@
-# Paweł Kolendo 302860
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -19,6 +18,7 @@ class Product:
             return self.name == other.name and self.price == other.price
 
 
+
 class TooManyProductsFoundError(Exception):
     def __init__(self, msg=None):
         if msg == None:
@@ -34,7 +34,7 @@ class Server(ABC):
 
 
 class ListServer(Server):
-    n_max_returned_entries = 3
+    n_max_returned_entries = 5
 
     def __init__(self, product_list):
         self.product_list = product_list
@@ -47,11 +47,13 @@ class ListServer(Server):
                 list.append(el)
         if len(list) > self.n_max_returned_entries:
             raise TooManyProductsFoundError()
-        return list
+
+
+        return sorted(list, key = lambda p:p.product_price)
 
 
 class MapServer(Server):
-    n_max_returned_entries = 3
+    n_max_returned_entries = 1
 
     def __init__(self, product_list):
         self.product_dict = {}
@@ -66,7 +68,8 @@ class MapServer(Server):
                 list.append(self.product_dict[el])
         if len(list) > self.n_max_returned_entries:
             raise TooManyProductsFoundError()
-        return list
+
+        return sorted(list, key = lambda p:p.product_price)
 
 
 class Client:
@@ -83,15 +86,3 @@ class Client:
         for x in lst:
             total += x.product_price
         return total
-
-
-p = Product('xd123', 4)
-ls = MapServer([p])
-print(ls.get_entries(2))
-ls = ListServer([p])
-print(ls.get_entries(2))
-ls = ListServer([p, p, p, p])
-#print(ls.get_entries(2))
-c = Client(ls)
-a=c.get_total_price(2)
-print(a)
