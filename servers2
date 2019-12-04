@@ -1,10 +1,12 @@
-#Paweł Kolendo 302860
+# Paweł Kolendo 302860
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from typing import Optional, List, Dict
 import re
 from abc import ABC, abstractmethod
+
+
 class Product:
     def __init__(self, product_name, product_price):
         self.product_name = product_name
@@ -18,38 +20,43 @@ class Product:
 
 
 class TooManyProductsFoundError(Exception):
-    def __init__(self,msg=None):
+    def __init__(self, msg=None):
         if msg == None:
-            msg="Too many products found"
+            msg = "Too many products found"
         super().__init__(msg)
 
+
 class Server(ABC):
-    
+
     @abstractmethod
-    def get_entries(self,n):
+    def get_entries(self, n):
         raise NotImplementedError()
+
+
 class ListServer(Server):
-    n_max_returned_entries = 5
+    n_max_returned_entries = 3
+
     def __init__(self, product_list):
         self.product_list = product_list
 
     def get_entries(self, n) -> List[Product]:
-        list=[]
+        list = []
         for el in self.product_list:
-            a=re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n),el.product_name)
-            if a!=None:
+            a = re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n), el.product_name)
+            if a != None:
                 list.append(el)
-        if len(list)>self.n_max_returned_entries:
+        if len(list) > self.n_max_returned_entries:
             raise TooManyProductsFoundError()
         return list
 
 
 class MapServer(Server):
     n_max_returned_entries = 3
+
     def __init__(self, product_list):
         self.product_dict = {}
         for el in product_list:
-            self.product_dict[el.product_name]=el
+            self.product_dict[el.product_name] = el
 
     def get_entries(self, n: int) -> List[Product]:
         list = []
@@ -57,7 +64,7 @@ class MapServer(Server):
             a = re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n), el)
             if a != None:
                 list.append(self.product_dict[el])
-        if len(list)>self.n_max_returned_entries:
+        if len(list) > self.n_max_returned_entries:
             raise TooManyProductsFoundError()
         return list
 
@@ -65,19 +72,26 @@ class MapServer(Server):
 class Client:
     def __init__(self, server):
         self.server = server
+
     def get_total_price(self, n_letters: Optional[int]) -> Optional[float]:
+        try:
+            lst = self.server.get_entries(n_letters)
+        except TooManyProductsFoundError:
+            return None
+
         total = 0
-        lst = self.server.get_entries(n_letters)
         for x in lst:
             total += x.product_price
         return total
 
-p=Product('xd123',4)
-ls=MapServer([p])
-print(ls.get_entries(2))
-ls=ListServer([p])
-print(ls.get_entries(2))
-ls=ListServer([p,p,p,p])
-print(ls.get_entries(2))
-c=Client(ls)
 
+p = Product('xd123', 4)
+ls = MapServer([p])
+print(ls.get_entries(2))
+ls = ListServer([p])
+print(ls.get_entries(2))
+ls = ListServer([p, p, p, p])
+#print(ls.get_entries(2))
+c = Client(ls)
+a=c.get_total_price(2)
+print(a)
