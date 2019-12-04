@@ -28,7 +28,7 @@ class ServerTest(unittest.TestCase):
         ls = ListServer([Product('a1%i' % i, i) for i in range(max)])
         list=ls.get_entries(1)
         for i in range(max-1):
-            self.assertTrue(list[i].product_price>=list[i-1].product_price)
+            self.assertTrue(list[i+1].product_price>=list[i].product_price)
 
 
 
