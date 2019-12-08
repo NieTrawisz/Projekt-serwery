@@ -1,4 +1,5 @@
 # Paweł Kolendo 302860
+# Michał Gorczyca 302846
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
 
