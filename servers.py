@@ -1,5 +1,6 @@
 # Paweł Kolendo 302860
 # Michał Gorczyca 302846
+# Michał Kasperek 302857
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -29,43 +30,41 @@ class TooManyProductsFoundError(Exception):
 
 
 class Server(ABC):
-    n_max_returned_entries = 3
+    n_max_returned_entries = 6
     @abstractmethod
-    def get_entries(self, n):
+    def get_entries(self, n_letters):
         raise NotImplementedError()
 
 
 class ListServer(Server):
     #n_max_returned_entries = 3
 
-    def __init__(self, product_list):
-        self.product_list = product_list
+    def __init__(self, products):
+        self.product_list = products
 
-    def get_entries(self, n) -> List[Product]:
+    def get_entries(self, n_letters) -> List[Product]:
         list = []
         for el in self.product_list:
-            a = re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n), el.name)
+            a = re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n_letters), el.name)
             if a != None:
                 list.append(el)
         if len(list) > self.n_max_returned_entries:
             raise TooManyProductsFoundError()
-
-
-        return sorted(list, key = lambda p:p.price)
+        return sorted(list, key=lambda p:p.price)
 
 
 class MapServer(Server):
     #n_max_returned_entries = 3
 
-    def __init__(self, product_list):
+    def __init__(self, products):
         self.product_dict = {}
-        for el in product_list:
+        for el in products:
             self.product_dict[el.name] = el
 
-    def get_entries(self, n: int) -> List[Product]:
+    def get_entries(self, n_letters: int) -> List[Product]:
         list = []
         for el in self.product_dict:
-            a = re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n), el)
+            a = re.match('^[a-zA-Z]{{{}}}\\d{{2,3}}$'.format(n_letters), el)
             if a != None:
                 list.append(self.product_dict[el])
         if len(list) > self.n_max_returned_entries:
@@ -83,7 +82,8 @@ class Client:
             lst = self.server.get_entries(n_letters)
         except TooManyProductsFoundError:
             return None
-
+        if len(lst)==0:
+            return None
         total = 0
         for x in lst:
             total += x.price
