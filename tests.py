@@ -1,3 +1,6 @@
+# Paweł Kolendo 302860
+# Michał Gorczyca 302846
+# Michał Kasperek 302857
 import unittest
 from collections import Counter
 
@@ -23,12 +26,18 @@ class ServerTest(unittest.TestCase):
             server = server_type(products)
             entries = server.get_entries(2)
             self.assertEqual(Counter([products[2], products[1]]), Counter(entries))
-    def test(self):
+    def test_list_sorted(self):
         max = ListServer.n_max_returned_entries
-        ls = ListServer([Product('a1%i' % i, i) for i in range(max)])
+        ls = ListServer([Product('a1%i' % i, -i*i) for i in range(max)])
         list=ls.get_entries(1)
-        for i in range(max-1):
-            self.assertTrue(list[i+1].price>=list[i].price)
+        for i in range(max - 1):
+            self.assertTrue(list[i].price<=list[i+1].price)
+    def test_map_sorted(self):
+        max = MapServer.n_max_returned_entries
+        ls = MapServer([Product('a1%i' % i, -i*i) for i in range(max)])
+        list=ls.get_entries(1)
+        for i in range(max - 1):
+            self.assertTrue(list[i].price<=list[i+1].price)
 
 
 
