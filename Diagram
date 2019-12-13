@@ -18,7 +18,7 @@ class MapServer{
 +get_entries(n: int) : List[Product]
 }
 
-class Server{
+abstract class Server{
 +{abstract} get_entries(n: int)
 }
 
